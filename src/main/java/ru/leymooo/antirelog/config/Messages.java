@@ -39,6 +39,9 @@ public class Messages implements ConfigurationSection {
     @Comment("Данное сообщение будет появляться только тогда, когда настроена функция 'commands-on-powerups-disable'")
     private String pvpStartedWithPowerups = "&c&lВы начали пвп с включеным GM/FLY/и тд и за это получили негативный эффект";
 
+    @Key("pvp-cant-exit")
+    private String pvpCantExit = "Вы не можете выйти из этого региона в режиме пвп!";
+
     public String getPvpStarted() {
         return pvpStarted;
     }
@@ -102,6 +105,9 @@ public class Messages implements ConfigurationSection {
     public String getPvpStartedWithPowerups() {
         return pvpStartedWithPowerups;
     }
+    public String getPvpCantExit() {
+        return pvpCantExit;
+    }
 
     @Override
     public String toString() {
@@ -122,6 +128,7 @@ public class Messages implements ConfigurationSection {
                 ", totemCooldown='" + totemCooldown + '\'' +
                 ", totemDisabledInPvp='" + totemDisabledInPvp + '\'' +
                 ", pvpStartedWithPowerups='" + pvpStartedWithPowerups + '\'' +
+                ", pvpCantExit='" + pvpCantExit + '\'' +
                 '}';
     }
 }

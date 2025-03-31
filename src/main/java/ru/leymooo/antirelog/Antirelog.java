@@ -1,5 +1,6 @@
 package ru.leymooo.antirelog;
 
+import com.sk89q.worldguard.WorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,6 +18,7 @@ import ru.leymooo.antirelog.manager.BossbarManager;
 import ru.leymooo.antirelog.manager.CooldownManager;
 import ru.leymooo.antirelog.manager.PowerUpsManager;
 import ru.leymooo.antirelog.manager.PvPManager;
+import ru.leymooo.antirelog.util.Placeholders;
 import ru.leymooo.antirelog.util.ProtocolLibUtils;
 
 import java.io.File;
@@ -32,12 +34,23 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 import ru.leymooo.antirelog.util.VersionUtils;
 
+import ru.leymooo.antirelog.wg.AntiExitFlag;
+
+import static ru.leymooo.antirelog.wg.AntiExitFlag.FACTORY;
+
 public class Antirelog extends JavaPlugin {
     private Settings settings;
     private PvPManager pvpManager;
     private CooldownManager cooldownManager;
     private boolean protocolLib;
     private boolean worldguard;
+
+    @Override
+    public void onLoad() {
+        if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+            AntiExitFlag.initializeFlag();
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -50,6 +63,15 @@ public class Antirelog extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PvPListener(this, pvpManager, settings), this);
         getServer().getPluginManager().registerEvents(new CooldownListener(this, cooldownManager, pvpManager, settings), this);
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            (new Placeholders(pvpManager)).register();
+        }
+
+        if(worldguard) {
+            AntiExitFlag.setSettingsAndManager(settings, pvpManager);
+            WorldGuard.getInstance().getPlatform().getSessionManager().registerHandler(FACTORY, null);
+        }
     }
 
     @Override
